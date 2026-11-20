@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>CX CRM — Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="./css/styles.css"/>
+  <style>
+    .admin-layout{display:flex;height:100vh;overflow:hidden}
+    .admin-sidebar{width:220px;flex-shrink:0;background:var(--dark);display:flex;flex-direction:column}
+    .admin-main{flex:1;overflow-y:auto;background:var(--surface-2);padding:32px}
+    .admin-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px}
+    .admin-header h1{font-size:22px;font-weight:700;color:var(--text-1)}
+    .admin-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:24px;margin-bottom:24px}
+    .admin-card-title{font-size:15px;font-weight:600;color:var(--text-1);margin-bottom:16px;display:flex;align-items:center;justify-content:space-between}
+    .role-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;text-transform:uppercase;letter-spacing:.4px}
+    .role-admin{background:rgba(255,79,31,.12);color:var(--orange)}
+    .role-agent{background:rgba(37,99,235,.1);color:var(--blue)}
+    .perm-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
+    .perm-yes{background:rgba(5,150,105,.1);color:#059669}
+    .perm-no{background:var(--surface-3);color:var(--text-4)}
+    .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+    .form-field{display:flex;flex-direction:column;gap:4px}
+    .form-field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.4px;color:var(--text-3)}
+    .form-field input,.form-field select{font-family:var(--font);font-size:13px;padding:8px 10px;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--surface-2);color:var(--text-1);outline:none}
+    .form-field input:focus,.form-field select:focus{border-color:var(--orange);background:var(--surface)}
+    .checkbox-row{display:flex;align-items:center;gap:8px;margin:10px 0}
+    .checkbox-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--orange);cursor:pointer}
+    .checkbox-row label{font-size:13px;color:var(--text-2);cursor:pointer}
+    .form-actions{display:flex;gap:8px;margin-top:16px}
+    .success-msg{background:rgba(5,150,105,.1);border:1px solid rgba(5,150,105,.2);color:#059669;padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:14px;display:none}
+    .error-msg{background:rgba(220,38,38,.08);border:1px solid rgba(220,38,38,.2);color:var(--red);padding:10px 14px;border-radius:var(--radius-sm);font-size:13px;margin-bottom:14px;display:none}
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+  <aside class="crm-sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-mark">
+        <svg viewBox="0 0 20 20" fill="none"><path d="M52 22 A28 28 0 1 0 52 78 L52 68 A18 18 0 1 1 52 32 Z" fill="white"/><line x1="58" y1="24" x2="88" y2="78" stroke="white" stroke-width="13" stroke-linecap="round"/><line x1="88" y1="24" x2="58" y2="78" stroke="white" stroke-width="13" stroke-linecap="round"/></svg>
+      </div>
+      <div class="brand-text">
+        <div class="brand-name">CX <span>CRM</span></div>
+        <div class="brand-version">Customer Experience</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <a class="nav-item active" href="/admin" style="text-decoration:none">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg>
+        User Management
+      </a>
+      <a class="nav-item" href="/" style="text-decoration:none">
+        <svg viewBox="0 0 20 20" fill="currentColor"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zm6-4a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zm6-3a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"/></svg>
+        Back to CRM
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="btn btn-outline" style="width:100%;font-size:12px" onclick="logout()">Sign Out</button>
+    </div>
+  </aside>
+
+  <main class="admin-main">
+    <div class="admin-header">
+      <h1>User Management</h1>
+    </div>
+
+    <!-- Create User -->
+    <div class="admin-card">
+      <div class="admin-card-title">Create New User</div>
+      <div id="createSuccess" class="success-msg"></div>
+      <div id="createError" class="error-msg"></div>
+      <div class="form-row">
+        <div class="form-field"><label>Username *</label><input id="nu_username" placeholder="username"/></div>
+        <div class="form-field"><label>Password *</label><input type="password" id="nu_password" placeholder="password"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>First Name</label><input id="nu_first_name" placeholder="First name"/></div>
+        <div class="form-field"><label>Last Name</label><input id="nu_last_name" placeholder="Last name"/></div>
+      </div>
+      <div class="form-row">
+        <div class="form-field"><label>Email</label><input type="email" id="nu_email" placeholder="email@company.com"/></div>
+        <div class="form-field"><label>Role</label>
+          <select id="nu_role">
+            <option value="agent">Agent</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="nu_integration" checked/>
+        <label for="nu_integration">Can use Genesys Cloud Integration (softphone + work automation)</label>
+      </div>
+      <div class="form-row" id="nu_mode_row">
+        <div class="form-field">
+          <label>Softphone Mode</label>
+          <select id="nu_mode">
+            <option value="embedded">Embedded (full iframe)</option>
+            <option value="headless">Headless (hidden iframe + call bar)</option>
+            <option value="disabled">Disabled (no softphone)</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn btn-primary" onclick="createUser()">Create User</button>
+      </div>
+    </div>
+
+    <!-- Users table -->
+    <div class="admin-card">
+      <div class="admin-card-title">
+        <span>All Users</span>
+        <button class="btn btn-outline btn-sm" onclick="loadUsers()">Refresh</button>
+      </div>
+      <table class="crm-table" id="usersTable">
+        <thead>
+          <tr><th>Name</th><th>Username</th><th>Email</th><th>Role</th><th>Integration</th><th>Mode</th><th>Created</th><th></th></tr>
+        </thead>
+        <tbody id="usersBody"></tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Edit User Modal -->
+<div class="modal-overlay" id="editOverlay" style="display:none" onclick="closeEdit(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title">Edit User</span>
+      <button class="modal-close" onclick="closeEdit()">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="eu_id"/>
+      <div id="editError" class="error-msg"></div>
+      <div class="form-row">
+        <div class="form-field"><label>First Name</label><input id="eu_first_name"/></div>
+        <div class="form-field"><label>Last Name</label><input id="eu_last_name"/></div>
+      </div>
+      <div class="form-field" style="margin-bottom:12px"><label>Email</label><input type="email" id="eu_email"/></div>
+      <div class="form-row">
+        <div class="form-field"><label>Role</label>
+          <select id="eu_role"><option value="agent">Agent</option><option value="admin">Admin</option></select>
+        </div>
+        <div class="form-field"><label>New Password (leave blank to keep)</label><input type="password" id="eu_password" placeholder="New password…"/></div>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="eu_integration"/>
+        <label for="eu_integration">Can use Genesys Cloud Integration</label>
+      </div>
+      <div class="form-field" style="margin-top:8px">
+        <label>Softphone Mode</label>
+        <select id="eu_mode">
+          <option value="embedded">Embedded (full iframe)</option>
+          <option value="headless">Headless (hidden iframe + call bar)</option>
+          <option value="disabled">Disabled (no softphone)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEdit()">Save Changes</button>
+    </div>
+  </div>
+</div>
+
+<script>
+function fmtDate(d) { if(!d) return '—'; return new Date(d).toLocaleDateString('en-IE',{day:'2-digit',month:'short',year:'numeric'}); }
+
+async function loadUsers() {
+  const r = await fetch('/api/users');
+  if (r.status === 401) { window.location.href = '/login'; return; }
+  if (r.status === 403) { document.body.innerHTML = '<div style="padding:40px;text-align:center;color:#fff">Access denied — admins only.</div>'; return; }
+  const users = await r.json();
+  const modeLabel = { embedded: 'Embedded', headless: 'Headless', disabled: 'Disabled' };
+  const modeColor = { embedded: 'perm-yes', headless: 'role-admin', disabled: 'perm-no' };
+  document.getElementById('usersBody').innerHTML = users.map(u => {
+    const mode = u.integration_mode || 'embedded';
+    return `
+    <tr>
+      <td><strong>${u.first_name} ${u.last_name}</strong></td>
+      <td style="font-family:monospace">${u.username}</td>
+      <td>${u.email||'—'}</td>
+      <td><span class="role-badge role-${u.role}">${u.role}</span></td>
+      <td><span class="perm-badge ${u.can_use_integration?'perm-yes':'perm-no'}">${u.can_use_integration?'Enabled':'Disabled'}</span></td>
+      <td><span class="perm-badge ${modeColor[mode]}">${modeLabel[mode]||mode}</span></td>
+      <td>${fmtDate(u.created_at)}</td>
+      <td style="text-align:right;white-space:nowrap">
+        <button class="btn btn-sm btn-outline" onclick="openEdit('${u.id}','${u.first_name}','${u.last_name}','${u.email||''}','${u.role}',${u.can_use_integration},'${mode}')">Edit</button>
+        <button class="btn btn-sm btn-danger" onclick="deleteUser('${u.id}','${u.username}')">Delete</button>
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+async function createUser() {
+  const successEl = document.getElementById('createSuccess');
+  const errorEl   = document.getElementById('createError');
+  successEl.style.display = 'none'; errorEl.style.display = 'none';
+  const body = {
+    username:  document.getElementById('nu_username').value.trim(),
+    password:  document.getElementById('nu_password').value,
+    first_name:document.getElementById('nu_first_name').value.trim(),
+    last_name: document.getElementById('nu_last_name').value.trim(),
+    email:     document.getElementById('nu_email').value.trim(),
+    role:      document.getElementById('nu_role').value,
+    can_use_integration: document.getElementById('nu_integration').checked,
+    integration_mode: document.getElementById('nu_mode').value,
+  };
+  const r = await fetch('/api/users', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) { errorEl.textContent = data.error; errorEl.style.display = ''; return; }
+  successEl.textContent = `User "${data.username}" created successfully.`; successEl.style.display = '';
+  ['nu_username','nu_password','nu_first_name','nu_last_name','nu_email'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('nu_role').value = 'agent';
+  document.getElementById('nu_integration').checked = true;
+  document.getElementById('nu_mode').value = 'embedded';
+  loadUsers();
+}
+
+function openEdit(id, fn, ln, email, role, integration, mode) {
+  document.getElementById('eu_id').value = id;
+  document.getElementById('eu_first_name').value = fn;
+  document.getElementById('eu_last_name').value = ln;
+  document.getElementById('eu_email').value = email;
+  document.getElementById('eu_role').value = role;
+  document.getElementById('eu_integration').checked = !!integration;
+  document.getElementById('eu_mode').value = mode || 'embedded';
+  document.getElementById('eu_password').value = '';
+  document.getElementById('editError').style.display = 'none';
+  document.getElementById('editOverlay').style.display = 'flex';
+}
+function closeEdit(e) {
+  if (e && e.target !== document.getElementById('editOverlay')) return;
+  document.getElementById('editOverlay').style.display = 'none';
+}
+async function saveEdit() {
+  const id = document.getElementById('eu_id').value;
+  const body = {
+    first_name: document.getElementById('eu_first_name').value.trim(),
+    last_name:  document.getElementById('eu_last_name').value.trim(),
+    email:      document.getElementById('eu_email').value.trim(),
+    role:       document.getElementById('eu_role').value,
+    can_use_integration: document.getElementById('eu_integration').checked,
+    integration_mode: document.getElementById('eu_mode').value,
+  };
+  const pw = document.getElementById('eu_password').value;
+  if (pw) body.password = pw;
+  const r = await fetch('/api/users/' + id, { method:'PATCH', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body) });
+  const data = await r.json();
+  if (!r.ok) { document.getElementById('editError').textContent = data.error; document.getElementById('editError').style.display = ''; return; }
+  document.getElementById('editOverlay').style.display = 'none';
+  loadUsers();
+}
+async function deleteUser(id, username) {
+  if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
+  await fetch('/api/users/' + id, { method:'DELETE' });
+  loadUsers();
+}
+async function logout() {
+  await fetch('/auth/logout', { method:'POST' });
+  window.location.href = '/login';
+}
+loadUsers();
+</script>
+</body>
+</html>

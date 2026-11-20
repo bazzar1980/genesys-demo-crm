@@ -1,0 +1,17 @@
+{
+  "name": "genesys-crm-demo",
+  "version": "1.0.0",
+  "description": "Fake CRM for Genesys Cloud demonstrations",
+  "main": "server.js",
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.19.2"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

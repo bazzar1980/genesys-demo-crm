@@ -1,0 +1,15 @@
+node_modules/
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal
+https-requirements/
+*.key
+*.pem
+*.p12
+*.pfx
+dist/
+build/
+npm-debug.log*

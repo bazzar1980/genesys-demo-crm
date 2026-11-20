@@ -1,0 +1,54 @@
+/* ── Headless Call Control Bar ──────────────────────────────────── */
+/* Append this to src/css/styles.css                                 */
+
+.headless-call-bar {
+  position: fixed;
+  top: 0; left: 50%; transform: translateX(-50%);
+  z-index: 1200;
+  display: flex; align-items: center; gap: 16px;
+  background: var(--surface-1, #fff);
+  border: 1px solid var(--border, #e2e8f0);
+  border-top: none;
+  border-radius: 0 0 14px 14px;
+  padding: 10px 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+  min-width: 360px;
+}
+
+.hcb-status {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 500; color: var(--text-2, #475569);
+}
+
+.hcb-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--text-4, #94a3b8);
+  transition: background 0.3s;
+}
+.hcb-dot.alerting  { background: #f59e0b; animation: hcb-pulse 0.8s infinite; }
+.hcb-dot.connected { background: #10b981; }
+.hcb-dot.acw       { background: #6366f1; }
+
+@keyframes hcb-pulse {
+  0%, 100% { opacity: 1; } 50% { opacity: 0.3; }
+}
+
+.hcb-caller {
+  display: flex; flex-direction: column; gap: 1px; flex: 1;
+}
+.hcb-caller-name { font-size: 13px; font-weight: 600; color: var(--text-1, #0f172a); }
+.hcb-caller-num  { font-size: 11px; color: var(--text-3, #64748b); font-family: var(--mono, monospace); }
+
+.hcb-actions { display: flex; gap: 8px; margin-left: auto; }
+
+.hcb-btn {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 14px; border-radius: 8px; border: none; cursor: pointer;
+  font-size: 12px; font-weight: 600; transition: opacity 0.15s;
+}
+.hcb-btn svg { width: 14px; height: 14px; }
+.hcb-btn:hover { opacity: 0.85; }
+
+.hcb-answer { background: #10b981; color: #fff; }
+.hcb-hangup { background: #ef4444; color: #fff; }
+.hcb-wrapup { background: #6366f1; color: #fff; }
